@@ -42,7 +42,7 @@ class CheckoutActivity : AppCompatActivity() {
         layoutBinding = ActivityCheckoutBinding.inflate(layoutInflater)
         setContentView(layoutBinding.root)
 
-        googlePayButton = layoutBinding.googlePayButton.root
+//        googlePayButton = layoutBinding.googlePayButton.root
         googlePayButton.setOnClickListener { requestPayment() }
 
         // Check whether Google Pay can be used to complete a payment
