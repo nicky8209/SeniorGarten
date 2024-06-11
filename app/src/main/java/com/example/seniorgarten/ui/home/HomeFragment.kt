@@ -1,12 +1,17 @@
 package com.example.seniorgarten.ui.home
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.seniorgarten.MainActivity
+import com.example.seniorgarten.ReservationActivity
 import com.example.seniorgarten.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -29,8 +34,15 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
+        val buttonReser: Button = binding.button
+
+        buttonReser.text = "예약하기"
         homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
+        }
+        buttonReser.setOnClickListener {
+            val intent = Intent(requireActivity(), ReservationActivity::class.java)
+            startActivity(intent)
         }
         return root
     }
