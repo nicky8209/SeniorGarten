@@ -12,6 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.seniorgarten.databinding.ActivityMainBinding
+import com.kakao.vectormap.utils.MapUtils.getHashKey
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet

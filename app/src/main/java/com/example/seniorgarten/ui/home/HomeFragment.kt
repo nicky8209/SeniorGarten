@@ -34,13 +34,19 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
-        val buttonReserve: Button = binding.button
+        val button: Button = binding.button
+        val button2: Button = binding.button2
+        val button3: Button = binding.button3
+        val button4: Button = binding.button4
 
-        buttonReserve.text = "예약하기"
+        button.text = "청소하기"
+        button2.text = "반찬배달"
+        button3.text = "병원동행"
+        button4.text = "긴급호출"
         homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-        buttonReserve.setOnClickListener {
+        button.setOnClickListener {
             val intent = Intent(requireActivity(), ReservationActivity::class.java)
             startActivity(intent)
         }
