@@ -48,47 +48,49 @@ class ReservationActivity : AppCompatActivity() {
 
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(map: KakaoMap) {
-                val viewport = map.viewport
-                val x = viewport.width() / 2
-                val y = viewport.height() / 2
-
-                val centerPosition = map.fromScreenPoint(x, y)
-                if (centerPosition != null) {
-                    tvMapViewLatLng.text =
-                        "Lat = ${centerPosition.latitude}\nLng = ${centerPosition.longitude}"
-
-                }
-
-                val point = map.toScreenPoint(centerPosition)
-
-                val labelLayer = map.labelManager?.layer
-                if (labelLayer != null) {
-                    // labelLayer가 null이 아닌 경우에만 addLabel() 메서드를 호출합니다.
-                    if (point != null) {
-                        label = labelLayer.addLabel(
-                            LabelOptions.from(map.fromScreenPoint(point.x, point.y))
-                                .setStyles(R.drawable.green_marker)
-                        )
-                    }
-                }
+                updateMapPosition(map, false)
 
                 map.setOnCameraMoveEndListener { _, _, _ ->
-                    val viewport = map.viewport
-                    val x = viewport.width() / 2
-                    val y = viewport.height() / 2
+                    updateMapPosition(map, true)
 
-                    val position = map.fromScreenPoint(x, y)
-                    label.moveTo(position)
-
-                    if (position != null) {
-                        tvMapViewLatLng.text =
-                            "Lat = ${position.latitude}\nLng = ${position.longitude}"
-
-                    }
                 }
             }
 
         })
+
+    }
+
+    private fun updateMapPosition(map: KakaoMap, b: Boolean) {
+        val viewport = map.viewport
+        val x = viewport.width() / 2
+        val y = viewport.height() / 2
+
+        val position = map.fromScreenPoint(x, y)
+        if (b) {
+            label.moveTo(position)
+
+        }
+        if (position != null) {
+            tvMapViewLatLng.text =
+                "Lat = ${position.latitude}\nLng = ${position.longitude}"
+
+        }
+        if (!b) {
+            val point = map.toScreenPoint(position)
+
+            val labelLayer = map.labelManager?.layer
+            if (labelLayer != null) {
+                // labelLayer가 null이 아닌 경우에만 addLabel() 메서드를 호출합니다.
+                if (point != null) {
+                    label = labelLayer.addLabel(
+                        LabelOptions.from(map.fromScreenPoint(point.x, point.y))
+                            .setStyles(R.drawable.green_marker)
+                    )
+                }
+            }
+
+        }
+
 
     }
 }
