@@ -1,4 +1,4 @@
-package com.example.seniorgarten.ui.dashboard
+package com.dongkun.seniorgarten.ui.dashboard
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

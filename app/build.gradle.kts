@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.seniorgarten"
+    namespace = "com.dongkun.seniorgarten"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.seniorgarten"
+        applicationId = "com.dongkun.seniorgarten"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

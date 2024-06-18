@@ -1,4 +1,4 @@
-package com.example.seniorgarten
+package com.dongkun.seniorgarten
 
 import android.content.Context
 import android.content.Intent
@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isInvisible
-import com.example.seniorgarten.databinding.ActivitySignUpBinding
+import com.dongkun.seniorgarten.databinding.ActivitySignUpBinding
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignUpBinding
