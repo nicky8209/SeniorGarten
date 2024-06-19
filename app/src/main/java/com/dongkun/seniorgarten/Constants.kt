@@ -1,4 +1,5 @@
 package com.dongkun.seniorgarten
 
-class Constants {
+object Constants {
+    const val IS_DEBUG: Boolean = true // 또는 false로 변경 가능
 }

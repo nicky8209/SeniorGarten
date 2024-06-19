@@ -26,7 +26,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (checkLoginState(this)) {
+        val savedUserName = getUserName(this)
+        if (savedUserName != null) {
             binding = ActivityMainBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             navView.setupWithNavController(navController)
 
         } else {
-            // SignUpActivity로 전환
+            // 사용자 이름이 저장되어 있지 않다면 SignUpActivity로 이동합니다.
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
             finish() // MainActivity 종료

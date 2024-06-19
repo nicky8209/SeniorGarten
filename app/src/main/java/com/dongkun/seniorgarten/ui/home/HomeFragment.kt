@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.dongkun.seniorgarten.Constants
 import com.dongkun.seniorgarten.MainActivity
 import com.dongkun.seniorgarten.ReservationActivity
 import com.dongkun.seniorgarten.databinding.FragmentHomeBinding
@@ -34,6 +35,9 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
+        if (Constants.IS_DEBUG) {
+            textView.visibility = View.VISIBLE
+        }
         val button: Button = binding.button
         val button2: Button = binding.button2
         val button3: Button = binding.button3
