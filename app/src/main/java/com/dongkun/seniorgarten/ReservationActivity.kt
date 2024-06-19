@@ -68,9 +68,9 @@ class ReservationActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        tvMapViewLatLng = binding.tvMapViewLatlng
-        val mapView: MapView = binding.mapView
-        setupMapView(mapView)
+//        tvMapViewLatLng = binding.tvMapViewLatlng
+//        val mapView: MapView = binding.mapView
+//        setupMapView(mapView)
     }
 
     private fun setupMapView(mapView: MapView) {

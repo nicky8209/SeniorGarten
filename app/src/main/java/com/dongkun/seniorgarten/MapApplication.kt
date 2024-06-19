@@ -8,6 +8,6 @@ class MapApplication : Application() {
         super.onCreate()
 
         // https://apis.map.kakao.com/android_v2/docs/getting-started/quickstart/#2-%EB%84%A4%EC%9D%B4%ED%8B%B0%EB%B8%8C-%EC%95%B1-%ED%82%A4-%EC%B6%94%EA%B0%80
-        KakaoMapSdk.init(this, "your_app_key");
+        KakaoMapSdk.init(this, "dff6b86881f9acb64ff80f9d50c52467")
     }
 }

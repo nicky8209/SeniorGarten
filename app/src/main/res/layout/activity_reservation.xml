@@ -29,31 +29,11 @@
             android:layout_marginTop="8dp"
             android:layout_weight="1">
 
-            <com.kakao.vectormap.MapView
-                android:id="@+id/map_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/tv_map_view_latlng"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="#80B8B6B6"
-                    android:padding="10dp"
-                    android:text="@string/tvMapViewLatLng"
-                    android:textColor="@color/title"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-            </com.kakao.vectormap.MapView>
-
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/fragmentContainerView"
+                android:name="com.dongkun.seniorgarten.KakaoMapFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
 
         <RelativeLayout
