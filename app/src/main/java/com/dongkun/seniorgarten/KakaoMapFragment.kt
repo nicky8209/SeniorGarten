@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.dongkun.seniorgarten.databinding.FragmentKakaoMapBinding
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -24,37 +26,35 @@ import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.Label
 import com.kakao.vectormap.label.LabelOptions
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okio.IOException
+import org.json.JSONObject
 
 class KakaoMapFragment : Fragment() {
 
     private var _binding: FragmentKakaoMapBinding? = null
+    private var isContinue = false
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
 
     private lateinit var label: Label
     private lateinit var tvMapViewLatLng: TextView
     private lateinit var map: KakaoMap
-
-    private val requestMultiplePermissionsLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val granted = permissions.entries.all { it.value }
-        if (granted) {
-            setupLocation(map)
-        } else {
-            Toast.makeText(requireContext(), "권한이 거부되었습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
+    private lateinit var kakaoMapViewModel: KakaoMapViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        ViewModelProvider(this)[KakaoMapViewModel::class.java]
+        kakaoMapViewModel = ViewModelProvider(requireActivity()).get(KakaoMapViewModel::class.java)
 
         _binding = FragmentKakaoMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -95,7 +95,6 @@ class KakaoMapFragment : Fragment() {
             override fun getPosition(): LatLng {
                 return LatLng.from(36.5869233979831, 128.187405044754)
             }
-//            36.5869233979831, 128.187405044754
         })
 
     }
@@ -111,7 +110,10 @@ class KakaoMapFragment : Fragment() {
 
         }
         if (position != null) {
-            val latLngText = getString(R.string.lat_lng_format, position.latitude, position.longitude)
+            // ViewModel을 통해 위치 정보 저장
+            kakaoMapViewModel.setSelectedPosition(position.latitude, position.longitude)
+            val latLngText =
+                getString(R.string.lat_lng_format, position.latitude, position.longitude)
             tvMapViewLatLng.text = latLngText
 
         }
@@ -133,28 +135,25 @@ class KakaoMapFragment : Fragment() {
 
     private fun setupLocation(map: KakaoMap) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        val permissionsToRequest = mutableListOf<String>()
+        // 이미 모든 권한이 허용된 상태일 경우 위치 정보 가져오기 시도
         if (ActivityCompat.checkSelfPermission(
-                requireContext(),
+                requireActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireActivity(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                1000
+            )
 
-        val permissionsArray = permissionsToRequest.toTypedArray()
-        if (permissionsArray.isNotEmpty()) {
-            // 권한 요청
-            requestMultiplePermissionsLauncher.launch(permissionsArray)
         } else {
-            // 이미 모든 권한이 허용된 상태일 경우 위치 정보 가져오기 시도
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 // Got last known location. In some rare situations this can be null.
                 // 최근 위치를 가져오는 데 성공했을 때의 동작
@@ -176,15 +175,12 @@ class KakaoMapFragment : Fragment() {
                 }
             }
         }
+//        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun setCoordinateListener(reservationActivity: ReservationActivity) {
-
     }
 
 }
