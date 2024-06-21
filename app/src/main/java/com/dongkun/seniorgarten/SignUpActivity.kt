@@ -8,12 +8,10 @@ import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isInvisible
 import com.dongkun.seniorgarten.databinding.ActivitySignUpBinding
 
 class SignUpActivity : AppCompatActivity() {
@@ -33,8 +31,11 @@ class SignUpActivity : AppCompatActivity() {
         val editText = binding.editText
 
         editText.setOnEditorActionListener { _, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE ||
-                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            if (
+                actionId == EditorInfo.IME_ACTION_DONE ||
+                (event != null &&
+                        event.keyCode == KeyEvent.KEYCODE_ENTER &&
+                        event.action == KeyEvent.ACTION_DOWN)
             ) {
                 // 여기에 완료 버튼이 눌렸을 때 실행할 코드를 작성합니다.
                 binding.textView.visibility = View.GONE
@@ -68,7 +69,6 @@ class SignUpActivity : AppCompatActivity() {
                 false // 이벤트를 처리하지 않음을 반환
             }
         }
-
     }
 
     private fun saveUserName(context: Context, name: String) {

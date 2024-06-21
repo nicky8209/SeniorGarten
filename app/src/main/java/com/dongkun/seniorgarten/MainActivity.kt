@@ -3,21 +3,15 @@ package com.dongkun.seniorgarten
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dongkun.seniorgarten.databinding.ActivityMainBinding
-import com.kakao.vectormap.utils.MapUtils.getHashKey
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.ResultSet
 import java.sql.SQLException
-import java.sql.Statement
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,21 +33,20 @@ class MainActivity : AppCompatActivity() {
             val navController = findNavController(R.id.nav_host_fragment_activity_main)
             // Passing each menu ID as a set of Ids because each
             // menu should be considered as top level destinations.
-//        val appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-//            )
-//        )
-//        setupActionBarWithNavController(navController, appBarConfiguration)
+            //        val appBarConfiguration = AppBarConfiguration(
+            //            setOf(
+            //                R.id.navigation_home, R.id.navigation_dashboard,
+            // R.id.navigation_notifications
+            //            )
+            //        )
+            //        setupActionBarWithNavController(navController, appBarConfiguration)
             navView.setupWithNavController(navController)
-
         } else {
             // 사용자 이름이 저장되어 있지 않다면 SignUpActivity로 이동합니다.
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
             finish() // MainActivity 종료
         }
-
     }
 
     private fun checkLoginState(context: Context): Boolean {
@@ -88,7 +81,6 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Toast로 웰컴 메시지를 표시합니다.
                     Toast.makeText(this, welcomeMessage, Toast.LENGTH_SHORT).show()
-
                 }
                 println("데이터베이스에 성공적으로 연결되었습니다.")
             } catch (e: SQLException) {
@@ -96,7 +88,6 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Toast로 웰컴 메시지를 표시합니다.
                     Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
-
                 }
                 // 연결 실패 시 예외 처리
                 println("데이터베이스 연결 실패: ${e.message}")
@@ -104,7 +95,6 @@ class MainActivity : AppCompatActivity() {
                 // 연결 종료
                 connection?.close()
             }
-
         }
 
         thread.start()

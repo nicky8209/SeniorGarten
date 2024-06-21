@@ -11,13 +11,10 @@ import org.json.JSONObject
 
 class ApiClient {
 
-    interface AddressCallback {
-        fun onAddressFound(address: String)
-        fun onError(message: String)
-    }
-
     fun getAddressFromCoordinates(
-        latitude: Double, longitude: Double, callback: (String?) -> Unit
+        latitude: Double,
+        longitude: Double,
+        callback: (String?) -> Unit
     ) {
         val apiKey = "99f7960af40f5028a1a7aac9376711e9"
         val url =
@@ -26,28 +23,32 @@ class ApiClient {
         val request = Request.Builder().url(url).header("Authorization", "KakaoAK $apiKey").build()
 
         val client = OkHttpClient()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
-                try {
-                    val jsonObject = JSONObject(responseBody)
-                    val documents = jsonObject.getJSONArray("documents")
-                    if (documents.length() > 0) {
-                        val firstDocument = documents.getJSONObject(0)
-                        val address = firstDocument.getJSONObject("address")
-                        val addressName = address.getString("address_name")
-                        callback(addressName)
+        client
+            .newCall(request)
+            .enqueue(
+                object : Callback {
+                    override fun onResponse(call: Call, response: Response) {
+                        val responseBody = response.body?.string()
+                        try {
+                            val jsonObject = JSONObject(responseBody)
+                            val documents = jsonObject.getJSONArray("documents")
+                            if (documents.length() > 0) {
+                                val firstDocument = documents.getJSONObject(0)
+                                val address = firstDocument.getJSONObject("address")
+                                val addressName = address.getString("address_name")
+                                callback(addressName)
+                            }
+                        } catch (e: Exception) {
+                            Log.e("ApiClient", "Error parsing JSON", e)
+                            callback(null) // 예외 발생 시
+                        }
                     }
-                } catch (e: Exception) {
-                    Log.e("KakaoMapFragment", "Error parsing JSON", e)
-                    callback(null) // 예외 발생 시
-                }
-            }
 
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("KakaoMapFragment", "Failed to execute request", e)
-                callback(null) // 예외 발생 시
-            }
-        })
+                    override fun onFailure(call: Call, e: IOException) {
+                        Log.e("ApiClient", "Failed to execute request", e)
+                        callback(null) // 예외 발생 시
+                    }
+                }
+            )
     }
 }
