@@ -5,6 +5,8 @@ import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -98,9 +100,11 @@ class KakaoMapFragment : Fragment() {
                     //                    setupLocation(p0)
                     updateMapPosition(map, kakaoMapViewModel, "centerPosition")
 
-                    map.setOnCameraMoveEndListener { _, _, _ ->
-                        Log.d("호출", "setOnCameraMoveEndListener")
-                        updateMapPosition(map, kakaoMapViewModel, "position")
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.post {
+                        map.setOnCameraMoveEndListener { _, _, _ ->
+                            updateMapPosition(map, kakaoMapViewModel, "position")
+                        }
                     }
                     setupLocation(map)
                 }
@@ -109,12 +113,12 @@ class KakaoMapFragment : Fragment() {
     }
 
     private fun updateMapPosition(map: KakaoMap, kakaoMapViewModel: KakaoMapViewModel, b: String) {
-        Log.d("KakaoMapFragment", "updateMapPostition")
         val viewport: Rect = map.viewport
 
         val x = viewport.width() / 2
         val y = viewport.height() / 2
 
+        Log.d("KakaoMapFragment", "updateMapPostition, b = $b")
         when (b) {
             "centerPosition" -> {
                 val centerPosition = map.fromScreenPoint(x, y)
