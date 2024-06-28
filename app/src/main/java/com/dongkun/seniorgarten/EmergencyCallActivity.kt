@@ -32,8 +32,9 @@ class EmergencyCallActivity : AppCompatActivity() {
         viewModel.selectedPosition.observe(this) { latLng ->
             Log.d("EmergencyCallActivity", "Observed value: $latLng")
             if (latLng != null) {
+                centerPosition = LatLng.from(latLng.latitude, latLng.longitude)
                 val apiClient = ApiClient()
-                apiClient.getAddressFromCoordinates(latLng.first, latLng.second) { address ->
+                apiClient.getAddressFromCoordinates(latLng.latitude, latLng.longitude) { address ->
                     if (address != null) {
                         Log.d("EmergencyCallActivity", "주소 찾음: $address")
                         runOnUiThread {

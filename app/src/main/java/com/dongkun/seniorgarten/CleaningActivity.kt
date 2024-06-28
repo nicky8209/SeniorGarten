@@ -41,9 +41,9 @@ class CleaningActivity : AppCompatActivity() {
         viewModel.selectedPosition.observe(this) { latLng ->
             Log.d("CleaningActivity", "Observed value: $latLng")
             if (latLng != null) {
-                centerPosition = LatLng.from(latLng.first, latLng.second)
+                centerPosition = LatLng.from(latLng.latitude, latLng.longitude)
                 val apiClient = ApiClient()
-                apiClient.getAddressFromCoordinates(latLng.first, latLng.second) { address ->
+                apiClient.getAddressFromCoordinates(latLng.latitude, latLng.longitude) { address ->
                     if (address != null) {
                         Log.d("CleaningActivity", "주소 찾음: $address")
                         runOnUiThread {

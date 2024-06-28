@@ -2,20 +2,20 @@ package com.dongkun.seniorgarten
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.dongkun.seniorgarten.databinding.FragmentKakaoMapBinding
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -29,7 +29,6 @@ import com.kakao.vectormap.label.LabelOptions
 class KakaoMapFragment : Fragment() {
 
     private var _binding: FragmentKakaoMapBinding? = null
-    private var isContinue = false
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -37,51 +36,36 @@ class KakaoMapFragment : Fragment() {
         get() = _binding!!
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
 
     private lateinit var label: Label
     private lateinit var tvMapViewLatLng: TextView
-    private lateinit var map: KakaoMap
-    private lateinit var kakaoMapViewModel: KakaoMapViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        kakaoMapViewModel = ViewModelProvider(requireActivity()).get(KakaoMapViewModel::class.java)
+        val kakaoMapViewModel =
+            ViewModelProvider(requireActivity()).get(KakaoMapViewModel::class.java)
 
         _binding = FragmentKakaoMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        //        val textView: TextView = binding.textDashboard
-        //        dashboardViewModel.text.observe(viewLifecycleOwner) {
-        //            textView.text = it
-        //        }
         tvMapViewLatLng = binding.tvMapViewLatlng
         val mapView: MapView = binding.mapView
         val locationPermissionRequest =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                     permissions ->
                 when {
-                    permissions.getOrDefault(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        false
-                    ) -> { // Precise location access granted.
-                        setupMapView(mapView)
+                    permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                        // Precise location access granted.
+                        setupMapView(mapView, kakaoMapViewModel)
                     }
-                    permissions.getOrDefault(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        false
-                    ) -> { // Only approximate location access granted.
-                        Toast.makeText(
-                            requireActivity(),
-                            "ACCESS_COARSE_LOCATION",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+                    permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                        // Only approximate location access granted.
                     }
-                    else -> { // No location access granted.
+                    else -> {
+                        // No location access granted.
                     }
                 }
             }
@@ -100,66 +84,83 @@ class KakaoMapFragment : Fragment() {
         return root
     }
 
-    private fun setupMapView(mapView: MapView) {
+    private fun setupMapView(mapView: MapView, kakaoMapViewModel: KakaoMapViewModel) {
         mapView.start(
             object : MapLifeCycleCallback() {
                 override fun onMapDestroy() {}
 
-                override fun onMapError(p0: Exception?) {}
+                override fun onMapError(e: Exception) {}
             },
             object : KakaoMapReadyCallback() {
-                override fun onMapReady(p0: KakaoMap) { //                setupReservationButton(p0)
-                    setupLocation(p0)
-                    updateMapPosition(p0, false)
+                override fun onMapReady(
+                    map: KakaoMap
+                ) { //                setupReservationButton(p0)
+                    //                    setupLocation(p0)
+                    updateMapPosition(map, kakaoMapViewModel, "centerPosition")
 
-                    p0.setOnCameraMoveEndListener { _, _, _ -> updateMapPosition(p0, true) }
-
-                    map = p0
-                }
-
-                override fun getPosition(): LatLng {
-                    return LatLng.from(36.5869233979831, 128.187405044754)
+                    map.setOnCameraMoveEndListener { _, _, _ ->
+                        Log.d("호출", "setOnCameraMoveEndListener")
+                        updateMapPosition(map, kakaoMapViewModel, "position")
+                    }
+                    setupLocation(map)
                 }
             }
         )
     }
 
-    private fun updateMapPosition(map: KakaoMap, b: Boolean) {
-        val viewport = map.viewport
+    private fun updateMapPosition(map: KakaoMap, kakaoMapViewModel: KakaoMapViewModel, b: String) {
+        Log.d("KakaoMapFragment", "updateMapPostition")
+        val viewport: Rect = map.viewport
+
         val x = viewport.width() / 2
         val y = viewport.height() / 2
 
-        val position = map.fromScreenPoint(x, y)
-        if (b) {
-            label.moveTo(position)
-        }
-        if (position != null) { // ViewModel을 통해 위치 정보 저장
-            kakaoMapViewModel.setSelectedPosition(position.latitude, position.longitude)
-            val latLngText =
-                getString(R.string.lat_lng_format, position.latitude, position.longitude)
-            if (Constants.IS_DEBUG) {
-                tvMapViewLatLng.text = latLngText
-            } else {
-                tvMapViewLatLng.text = "지도를 움직여서 주소를 설정할 수 있어요!"
-            }
-        }
-        if (!b) {
-            val point = map.toScreenPoint(position)
+        when (b) {
+            "centerPosition" -> {
+                val centerPosition = map.fromScreenPoint(x, y)
+                if (centerPosition != null) {
+                    Log.d(
+                        "KakaoMapFragment",
+                        "Lat = ${centerPosition.latitude}\nLng = ${centerPosition.longitude}"
+                    )
+                    tvMapViewLatLng.text =
+                        "Lat = ${centerPosition.latitude}\nLng = ${centerPosition.longitude}"
+                }
+                // toScreenPoint() 를 이용하여 지리적 좌표를 스크린 좌표로 변환할 수 있습니다.
+                val point = map.toScreenPoint(centerPosition)
 
-            val labelLayer = map.labelManager?.layer
-            if (labelLayer != null) { // labelLayer가 null이 아닌 경우에만 addLabel() 메서드를 호출합니다.
-                if (point != null) {
-                    label =
-                        labelLayer.addLabel(
-                            LabelOptions.from(map.fromScreenPoint(point.x, point.y))
-                                .setStyles(R.drawable.green_marker)
-                        )
+                val labelManager = map.labelManager
+                if (labelManager != null) {
+                    val layer = labelManager.layer
+                    if (layer != null) {
+                        if (point != null) {
+                            label =
+                                layer.addLabel(
+                                    LabelOptions.from(map.fromScreenPoint(point.x, point.y))
+                                        .setStyles(R.drawable.green_marker)
+                                )
+                        }
+                    }
+                }
+            }
+            "position" -> {
+                // fromScreenPoint() 를 이용하여 스크린 좌표를 지리적 좌표로 변환할 수 있습니다.
+                val position = map.fromScreenPoint(x, y)
+                label.moveTo(position)
+
+                if (position != null) {
+                    kakaoMapViewModel.setSelectedPosition(position.latitude, position.longitude)
+                    Log.d(
+                        "KakaoMapFragment",
+                        "Lat = ${position.latitude}\nLng = ${position.longitude}"
+                    )
+                    tvMapViewLatLng.text = "Lat = ${position.latitude}\nLng = ${position.longitude}"
                 }
             }
         }
     }
 
-    private fun setupLocation(map: KakaoMap) {
+    private fun setupLocation(map: KakaoMap): LatLng {
         fusedLocationClient =
             LocationServices.getFusedLocationProviderClient(
                 requireActivity()
@@ -182,23 +183,17 @@ class KakaoMapFragment : Fragment() {
                 ),
                 1000
             )
-        } else {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location?
-                -> // Got last known location. In some rare situations this can be null.
-                // 최근 위치를 가져오는 데 성공했을 때의 동작
-                if (location != null) { // 위치를 사용할 수 있음
-                    val latitude = location.latitude
-                    val longitude =
-                        location
-                            .longitude // 여기서 가져온 위치를 사용할 수 있습니다. // 이 시점에서 latitude와 longitude에 값이
-                    // 설정됩니다. // 이제 이 값을 외부에서 사용할 수 있습니다. // 예: 다른 함수에서 사용하거나 변수에
-                    // 할당할 수 있습니다.
-                    map.moveCamera(
-                        CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-                    )
-                }
+        }
+        var latLng = LatLng.from(37.497838, 127.027576)
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location?
+            -> // Got last known location. In some rare situations this can be null.
+            // 최근 위치를 가져오는 데 성공했을 때의 동작
+            if (location != null) { // 위치를 사용할 수 있음
+                latLng = LatLng.from(location.latitude, location.longitude)
+                map.moveCamera(CameraUpdateFactory.newCenterPosition(latLng))
             }
-        } //        }
+        }
+        return latLng
     }
 
     override fun onDestroyView() {
