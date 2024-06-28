@@ -28,7 +28,7 @@ class ApiClient {
             .enqueue(
                 object : Callback {
                     override fun onResponse(call: Call, response: Response) {
-                        val responseBody = response.body?.string()
+                        val responseBody = response.body.string()
                         try {
                             val jsonObject = JSONObject(responseBody)
                             val documents = jsonObject.getJSONArray("documents")

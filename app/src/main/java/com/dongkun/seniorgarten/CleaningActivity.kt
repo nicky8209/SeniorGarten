@@ -51,7 +51,7 @@ class CleaningActivity : AppCompatActivity() {
                             binding.textView7.text = address
                         }
                     } else {
-                        Log.e("MainActivity", "주소를 찾을 수 없습니다.")
+                        Log.e("CleaningActivity", "주소를 찾을 수 없습니다.")
                     }
                 }
             } else {

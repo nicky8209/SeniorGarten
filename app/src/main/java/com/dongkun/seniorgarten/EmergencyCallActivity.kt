@@ -28,24 +28,24 @@ class EmergencyCallActivity : AppCompatActivity() {
         // KakaoMapViewModel의 LiveData를 관찰하여 UI 업데이트
         val viewModel: KakaoMapViewModel =
             ViewModelProvider(this).get(KakaoMapViewModel::class.java)
-        Log.d("ReservationActivity", viewModel.selectedPosition.hasActiveObservers().toString())
+        Log.d("EmergencyCallActivity", viewModel.selectedPosition.hasActiveObservers().toString())
         viewModel.selectedPosition.observe(this) { latLng ->
-            Log.d("ReservationActivity", "Observed value: $latLng")
+            Log.d("EmergencyCallActivity", "Observed value: $latLng")
             if (latLng != null) {
                 val apiClient = ApiClient()
                 apiClient.getAddressFromCoordinates(latLng.first, latLng.second) { address ->
                     if (address != null) {
-                        Log.d("MainActivity", "주소 찾음: $address")
+                        Log.d("EmergencyCallActivity", "주소 찾음: $address")
                         runOnUiThread {
                             // UI 업데이트 등의 작업을 수행할 수 있음
                             binding.textView7.text = address
                         }
                     } else {
-                        Log.e("MainActivity", "주소를 찾을 수 없습니다.")
+                        Log.e("EmergencyCallActivity", "주소를 찾을 수 없습니다.")
                     }
                 }
             } else {
-                Log.d("ReservationActivity", "Observed value is null")
+                Log.d("EmergencyCallActivity", "Observed value is null")
             }
         }
     }
