@@ -19,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.dongkun.seniorgarten.databinding.FragmentKakaoMapBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -189,14 +191,16 @@ class KakaoMapFragment : Fragment() {
             )
         }
         var latLng = LatLng.from(37.497838, 127.027576)
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location?
-            -> // Got last known location. In some rare situations this can be null.
-            // 최근 위치를 가져오는 데 성공했을 때의 동작
-            if (location != null) { // 위치를 사용할 수 있음
-                latLng = LatLng.from(location.latitude, location.longitude)
-                map.moveCamera(CameraUpdateFactory.newCenterPosition(latLng))
+        fusedLocationClient
+            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+            .addOnSuccessListener { location: Location?
+                -> // Got last known location. In some rare situations this can be null.
+                // 최근 위치를 가져오는 데 성공했을 때의 동작
+                if (location != null) { // 위치를 사용할 수 있음
+                    latLng = LatLng.from(location.latitude, location.longitude)
+                    map.moveCamera(CameraUpdateFactory.newCenterPosition(latLng))
+                }
             }
-        }
         return latLng
     }
 
