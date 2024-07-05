@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten.ui.home
+package me.melona.seniorgarten.ui.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,10 +9,10 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.dongkun.seniorgarten.CleaningActivity
-import com.dongkun.seniorgarten.Constants
-import com.dongkun.seniorgarten.EmergencyCallActivity
-import com.dongkun.seniorgarten.databinding.FragmentHomeBinding
+import me.melona.seniorgarten.CleaningActivity
+import me.melona.seniorgarten.Constants
+import me.melona.seniorgarten.EmergencyCallActivity
+import me.melona.seniorgarten.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
 

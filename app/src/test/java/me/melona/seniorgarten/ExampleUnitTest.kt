@@ -1,4 +1,4 @@
-package com.example.seniorgarten
+package me.melona.seniorgarten
 
 import org.junit.Test
 

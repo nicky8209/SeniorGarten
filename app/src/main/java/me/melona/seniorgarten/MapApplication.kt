@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten
+package me.melona.seniorgarten
 
 import android.app.Application
 import com.kakao.vectormap.KakaoMapSdk

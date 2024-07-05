@@ -31,7 +31,7 @@
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragmentContainerView"
-                android:name="com.dongkun.seniorgarten.KakaoMapFragment"
+                android:name="me.melona.seniorgarten.KakaoMapFragment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten.ui.dashboard
+package me.melona.seniorgarten.ui.dashboard
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten
+package me.melona.seniorgarten
 
 import android.content.Context
 import android.content.Intent
@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.dongkun.seniorgarten.databinding.ActivityMainBinding
+import me.melona.seniorgarten.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.sql.Connection
 import java.sql.DriverManager

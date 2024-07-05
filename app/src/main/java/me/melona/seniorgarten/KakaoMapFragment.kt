@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten
+package me.melona.seniorgarten
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -16,7 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.dongkun.seniorgarten.databinding.FragmentKakaoMapBinding
+import me.melona.seniorgarten.databinding.FragmentKakaoMapBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority

@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten.ui.notifications
+package me.melona.seniorgarten.ui.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

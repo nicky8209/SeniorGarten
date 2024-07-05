@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten
+package me.melona.seniorgarten
 
 import android.content.Context
 import android.os.Bundle
@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import com.dongkun.seniorgarten.databinding.ActivityCleaningBinding
+import me.melona.seniorgarten.databinding.ActivityCleaningBinding
 import com.kakao.vectormap.LatLng
 import java.sql.Connection
 import java.sql.DriverManager

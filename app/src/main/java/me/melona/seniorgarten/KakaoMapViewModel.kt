@@ -1,4 +1,4 @@
-package com.dongkun.seniorgarten
+package me.melona.seniorgarten
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
