@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import me.melona.seniorgarten.Constants
 import me.melona.seniorgarten.databinding.FragmentDashboardBinding
 
 class DashboardFragment : Fragment() {
@@ -29,6 +30,9 @@ class DashboardFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textDashboard
+        if (Constants.IS_DEBUG) {
+            textView.visibility = View.VISIBLE
+        }
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }

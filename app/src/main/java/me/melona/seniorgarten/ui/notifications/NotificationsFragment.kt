@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import me.melona.seniorgarten.Constants
 import me.melona.seniorgarten.databinding.FragmentNotificationsBinding
 
 class NotificationsFragment : Fragment() {
@@ -29,6 +30,9 @@ class NotificationsFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textNotifications
+        if (Constants.IS_DEBUG) {
+            textView.visibility = View.VISIBLE
+        }
         notificationsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
