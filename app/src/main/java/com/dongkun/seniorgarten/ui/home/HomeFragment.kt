@@ -35,12 +35,14 @@ class HomeFragment : Fragment() {
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                 // 정밀 위치 권한이 허용된 경우
-                getCurrentAddress()
+                getCurrentLocation()
             }
+
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 // 대략적인 위치 권한만 허용된 경우
-                getCurrentAddress()
+                getCurrentLocation()
             }
+
             else -> {
                 // 권한이 거부된 경우 사용자에게 알림
                 Toast.makeText(requireContext(), "위치 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
@@ -77,55 +79,69 @@ class HomeFragment : Fragment() {
     }
 
     private fun requestLocationPermission() {
-        when {
+        // Context를 얻기 위해 requireContext() 사용
+        if (
             ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                // 위치 권한이 이미 허용된 경우
-                getCurrentAddress()
-            }
-            else -> {
-                // 권한을 직접 요청
-                locationPermissionRequest.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionRequest.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 )
-            }
+            )
+        } else {
+            getCurrentLocation()
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getCurrentAddress() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    val geocoder = Geocoder(requireContext(), Locale.KOREA)
-                    try {
-                        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                        if (addresses != null && addresses.isNotEmpty()) {
-                            val address = addresses[0]
-                            // ★★★ 여기서 ID를 부여한 TextInputEditText에 주소를 설정합니다 ★★★
-                            binding.addressEditText.setText(address.getAddressLine(0))
-                        } else {
-                            Toast.makeText(requireContext(), "주소를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
-                        }
-                    } catch (e: Exception) {
-                        Log.e("HomeFragment", "주소 변환 실패", e)
-                        Toast.makeText(requireContext(), "주소 변환 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "위치를 가져올 수 없습니다. GPS가 켜져 있는지 확인하세요.", Toast.LENGTH_LONG).show()
-                }
+    private fun getCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                val address = getAddressFromLocation(location.latitude, location.longitude)
+                binding.addressInputLayout.editText?.setText(address)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "위치 정보를 가져올 수 없습니다. GPS를 확인해주세요.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-            .addOnFailureListener { e ->
-                Log.e("HomeFragment", "위치 정보 가져오기 실패", e)
-                Toast.makeText(requireContext(), "위치 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
+        }.addOnFailureListener { e ->
+            Log.e("LocationError", "위치 정보 로딩 실패", e)
+            Toast.makeText(requireContext(), "위치 정보 로딩에 실패했습니다.", Toast.LENGTH_SHORT).show()
+        }
     }
 
+    private fun getAddressFromLocation(latitude: Double, longitude: Double): String {
+        return try {
+            // Geocoder에 requireContext() 전달
+            val geocoder = Geocoder(requireContext(), Locale.KOREA)
+            val addresses = geocoder.getFromLocation(latitude, longitude, 1)
+            if (addresses != null && addresses.isNotEmpty()) {
+                addresses[0].getAddressLine(0).toString()
+            } else {
+                "주소를 찾을 수 없습니다."
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "주소 변환 중 오류가 발생했습니다."
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
